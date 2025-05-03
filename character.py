@@ -63,3 +63,6 @@ class Character:
         self.occupation: str = occupation
         self.hobbies: list[str] = hobbies
         self.relationships: list["Relationship"] = relationships
+
+        # Events
+        self.history: list[str] = []
