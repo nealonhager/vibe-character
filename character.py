@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
-from random import choice, choices
+from random import choice, choices, normalvariate
 from enums import (
     Gender,
     BloodType,
@@ -12,7 +12,7 @@ from enums import (
     Build,
     Race,
 )
-from units import Pounds, Height
+from units import Pounds
 from event import Event
 from uuid import uuid4
 from faker import Faker
@@ -67,7 +67,7 @@ class Character:
         siblings: list["Character"],
         children: list["Character"],
         gender: Gender,
-        height: Height,
+        height: int,  # Height in inches
         weight: Pounds,
         blood_type: BloodType,
         eye_color: EyeColor,
@@ -179,7 +179,9 @@ class Character:
         ic(self.get_physical_description())
 
     def get_physical_description(self):
-        return f"A {self.height[0]}'{self.height[1]}\" tall, {self.weight} lbs, {self.build.value} build, {self.hair_color.value} hair, {self.eye_color.value} eyes, {self.gender.value}, of {self.race.value} descent, who is a {self.occupation}."
+        feet = self.height // 12
+        inches = self.height % 12
+        return f"A {feet}'{inches}\" tall, {self.weight} lbs, {self.build.value} build, {self.hair_color.value if not isinstance(self.hair_color, str) else self.hair_color} hair, {self.eye_color.value} eyes, {self.gender.value}, of {self.race.value} descent, who is a {self.occupation}."
 
 
 class CharacterFactory:
@@ -228,6 +230,19 @@ class CharacterFactory:
         else:
             build = choice(list(Build))
 
+        # Generate height based on gender using a normal distribution
+        height = int(
+            round(
+                normalvariate(
+                    mu=63 if gender == Gender.FEMALE else 68,  # Mean height in inches
+                    sigma=3.5,  # Standard deviation in inches
+                )
+            )
+        )
+
+        # Clamp height to a reasonable range (e.g., 4'0" to 8'0")
+        height = max(48, min(96, height))
+
         character = Character(
             id=uuid4(),
             name=fake.first_name(),
@@ -240,10 +255,7 @@ class CharacterFactory:
             siblings=[],
             children=[],
             gender=gender,
-            height=(
-                choices(range(4, 8), weights=[0.02, 0.66, 0.3, 0.02], k=1)[0],
-                choices(range(0, 12), k=1)[0],
-            ),
+            height=height,
             weight=weight,
             blood_type=choice(list(BloodType)),
             eye_color=choice(list(EyeColor)),
