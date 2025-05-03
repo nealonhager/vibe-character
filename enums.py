@@ -96,3 +96,31 @@ class Build(Enum):
     AVERAGE = "Average"
     SOFT = "Soft"
     FAT = "Fat"
+
+
+class RelationshipStatus(Enum):
+    EXCELLENT = "Excellent"
+    GOOD = "Good"
+    NEUTRAL = "Neutral"
+    BAD = "Bad"
+    TERRIBLE = "Terrible"
+    ENEMY = "Enemy"
+
+
+class RelationshipType(Enum):
+    PARENT = "Parent"
+    CHILD = "Child"
+    SIBLING = "Sibling"
+    SPOUSE = "Spouse"
+    PARTNER = "Partner"
+    FRIEND = "Friend"
+    CLOSE_FRIEND = "Close Friend"
+    ACQUAINTANCE = "Acquaintance"
+    ROMANTIC_INTEREST = "Romantic Interest"
+    COLLEAGUE = "Colleague"
+    MENTOR = "Mentor"
+    MENTEE = "Mentee"
+    RIVAL = "Rival"
+    ENEMY = "Enemy"
+    GUARDIAN = "Guardian"
+    WARD = "Ward"

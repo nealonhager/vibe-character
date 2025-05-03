@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Character Manager</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <h1>Character Manager</h1>
+
+    <h2>Characters</h2>
+    <table id="characters-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Family Name</th>
+          <th>Gender</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Character rows will be inserted here by JS -->
+      </tbody>
+    </table>
+
+    <!-- Add a container for the edit form, initially hidden -->
+    <div id="edit-form-container" style="display: none">
+      <h2>Edit Character</h2>
+      <form id="edit-character-form">
+        <input type="hidden" id="edit-character-id" />
+
+        <fieldset>
+          <legend>Identity</legend>
+          <div>
+            <label for="edit-name">Name:</label>
+            <input type="text" id="edit-name" name="name" required />
+          </div>
+          <div>
+            <label for="edit-family-name">Family Name:</label>
+            <input
+              type="text"
+              id="edit-family-name"
+              name="family_name"
+              required
+            />
+          </div>
+          <div>
+            <label for="edit-title">Title:</label>
+            <input
+              type="text"
+              id="edit-title"
+              name="title"
+              placeholder="e.g., Mr, Ms, Dr, Sir"
+            />
+            <!-- Simple text for now -->
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Lineage</legend>
+          <div>
+            <label for="edit-birth-date">Birth Date:</label>
+            <input type="date" id="edit-birth-date" name="birth_date" />
+          </div>
+          <div>
+            <label for="edit-birth-place">Birth Place:</label>
+            <input type="text" id="edit-birth-place" name="birth_place" />
+          </div>
+          <!-- Mother/Father IDs are usually set via relationships, not direct edit -->
+        </fieldset>
+
+        <fieldset>
+          <legend>Physical</legend>
+          <div>
+            <label for="edit-gender">Gender:</label>
+            <select id="edit-gender" name="gender">
+              <option value="">[Not Set]</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+              <!-- Add more if in Enum -->
+            </select>
+          </div>
+          <div>
+            <label for="edit-height">Height (inches):</label>
+            <input type="number" id="edit-height" name="height" min="0" />
+          </div>
+          <div>
+            <label for="edit-weight">Weight (lbs):</label>
+            <input type="number" id="edit-weight" name="weight" min="0" />
+          </div>
+          <div>
+            <label for="edit-blood-type">Blood Type:</label>
+            <select id="edit-blood-type" name="blood_type">
+              <option value="">[Not Set]</option>
+              <option value="A_POSITIVE">A+</option>
+              <option value="A_NEGATIVE">A-</option>
+              <option value="B_POSITIVE">B+</option>
+              <option value="B_NEGATIVE">B-</option>
+              <option value="AB_POSITIVE">AB+</option>
+              <option value="AB_NEGATIVE">AB-</option>
+              <option value="O_POSITIVE">O+</option>
+              <option value="O_NEGATIVE">O-</option>
+            </select>
+          </div>
+          <div>
+            <label for="edit-eye-color">Eye Color:</label>
+            <select id="edit-eye-color" name="eye_color">
+              <option value="">[Not Set]</option>
+              <option value="Amber">Amber</option>
+              <option value="Blue">Blue</option>
+              <option value="Brown">Brown</option>
+              <option value="Gray">Gray</option>
+              <option value="Green">Green</option>
+              <option value="Hazel">Hazel</option>
+              <option value="Red">Red</option>
+              <option value="Violet">Violet</option>
+            </select>
+          </div>
+          <div>
+            <label for="edit-hair-color">Hair Color:</label>
+            <input
+              type="text"
+              id="edit-hair-color"
+              name="hair_color"
+              placeholder="e.g., Brown, Blonde, Bald"
+            />
+            <!-- Handles string/enum -->
+          </div>
+          <div>
+            <label for="edit-race">Race:</label>
+            <select id="edit-race" name="race">
+              <option value="">[Not Set]</option>
+              <option value="Human">Human</option>
+              <option value="Elf">Elf</option>
+              <option value="Dwarf">Dwarf</option>
+              <option value="Orc">Orc</option>
+              <option value="Goblin">Goblin</option>
+              <!-- Add other races from Enum -->
+            </select>
+          </div>
+          <div>
+            <label for="edit-build">Build:</label>
+            <select id="edit-build" name="build">
+              <option value="">[Not Set]</option>
+              <option value="Slender">Slender</option>
+              <option value="Average">Average</option>
+              <option value="Athletic">Athletic</option>
+              <option value="Muscular">Muscular</option>
+              <option value="Heavy">Heavy</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Abilities</legend>
+          <div>
+            <label for="edit-strength">Strength:</label
+            ><input type="number" id="edit-strength" name="strength" min="0" />
+          </div>
+          <div>
+            <label for="edit-endurance">Endurance:</label
+            ><input
+              type="number"
+              id="edit-endurance"
+              name="endurance"
+              min="0"
+            />
+          </div>
+          <div>
+            <label for="edit-dexterity">Dexterity:</label
+            ><input
+              type="number"
+              id="edit-dexterity"
+              name="dexterity"
+              min="0"
+            />
+          </div>
+          <div>
+            <label for="edit-constitution">Constitution:</label
+            ><input
+              type="number"
+              id="edit-constitution"
+              name="constitution"
+              min="0"
+            />
+          </div>
+          <div>
+            <label for="edit-intelligence">Intelligence:</label
+            ><input
+              type="number"
+              id="edit-intelligence"
+              name="intelligence"
+              min="0"
+            />
+          </div>
+          <div>
+            <label for="edit-wisdom">Wisdom:</label
+            ><input type="number" id="edit-wisdom" name="wisdom" min="0" />
+          </div>
+          <div>
+            <label for="edit-charisma">Charisma:</label
+            ><input type="number" id="edit-charisma" name="charisma" min="0" />
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Traits & Hobbies</legend>
+          <div>
+            <label for="edit-traits">Traits (comma-separated):</label>
+            <textarea id="edit-traits" name="traits" rows="3"></textarea>
+          </div>
+          <div>
+            <label for="edit-hobbies">Hobbies (comma-separated):</label>
+            <textarea id="edit-hobbies" name="hobbies" rows="3"></textarea>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Other</legend>
+          <div>
+            <label for="edit-occupation">Occupation:</label>
+            <input type="text" id="edit-occupation" name="occupation" />
+          </div>
+          <div>
+            <label for="edit-primary-address">Primary Address:</label>
+            <textarea
+              id="edit-primary-address"
+              name="primary_address"
+              rows="3"
+            ></textarea>
+          </div>
+        </fieldset>
+
+        <button type="submit">Save Changes</button>
+        <button type="button" id="cancel-edit-btn">Cancel</button>
+      </form>
+    </div>
+
+    <h2>Create New Character</h2>
+    <form id="create-character-form">
+      <p>
+        Click the button to create a new character with default random
+        attributes.
+      </p>
+      <button type="submit">Create Random Character</button>
+    </form>
+    <p id="message-area"></p>
+
+    <script src="/static/script.js"></script>
+  </body>
+</html>

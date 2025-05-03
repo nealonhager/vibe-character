@@ -13,6 +13,13 @@ faker = "^37.1.0"
 icecream = "^2.1.4"
 openai = "^1.35.3"
 requests = "^2.32.3"
+flask = "^3.1.0"
+flask-sqlalchemy = "^3.1.1"
+sqlalchemy = {version = ">=2.0", extras = ["mypy"]}
+marshmallow = "^4.0.0"
+flask-migrate = "^4.1.0"
+python-dotenv = "^1.1.0"
+marshmallow-enum = "^1.5.1"
 
 [build-system]
 requires = ["poetry-core"]
