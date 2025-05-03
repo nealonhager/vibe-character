@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* All default Vite styles removed. Base styles will come from Tailwind Preflight. */
+
+/* Test style removed */

@@ -11,3 +11,14 @@
 - [x] Add Update endpoint (`PUT /api/characters/<id>`) to the backend.
 - [x] Fix enum dropdowns in edit form (HTML option values don't match enum values)
 - [x] Implement PUT /api/characters/<uuid:character_id> endpoint in `app/api/routes.py` for updating characters.
+- [x] Refactor frontend from vanilla HTML/CSS/JS to React + Tailwind CSS
+  - [x] Set up basic React + Tailwind project structure (Done)
+  - [x] Create main `App.jsx` component
+  - [x] Fetch and display characters in a table (`CharacterTable.jsx`)
+  - [ ] Implement character creation (`CharacterCreateForm.jsx`)
+  - [ ] Implement character editing (`CharacterEditForm.jsx`)
+  - [x] Implement character deletion
+    - [x] Add delete button and API call (Done)
+    - [x] Add custom confirmation modal
+  - [x] Replace default Vite styling with Tailwind utility classes
+  - [ ] Configure Flask to serve the React build (production)
