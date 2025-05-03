@@ -48,6 +48,22 @@ class HairColor(Enum):
     ORANGE = "Orange"
 
 
+class Race(Enum):
+    INUIT = "Inuit"
+    NATIVE_AMERICAN = "Native American"
+    CENTRAL_AMERICAN = "Central American"
+    SOUTH_AMERICAN = "South American"
+    PACIFIC_ISLANDER = "Pacific Islander"
+    NORTHERN_EUROPEAN = "Northern European"
+    SOUTH_EUROPEAN = "South European"
+    EASTERN_EUROPEAN = "Eastern European"
+    MIDDLE_EASTERN = "Middle Eastern"
+    INDIAN = "Indian (Indian Subcontinent)"
+    SOUTH_EAST_ASIAN = "South East Asian"
+    NORTH_AFRICAN = "North African"
+    AFRICAN = "African"
+
+
 class MaleTitle(Enum):
     LORD = "Lord"
     SIR = "Sir"
@@ -69,3 +85,11 @@ class FemaleTitle(Enum):
     DUCHESS = "Duchess"
     PRINCESS = "Princess"
     MADAME = "Madame"
+
+
+class Build(Enum):
+    SLIM = "Slim"
+    ATHLETIC = "Athletic"
+    AVERAGE = "Average"
+    SOFT = "Soft"
+    FAT = "Fat"
