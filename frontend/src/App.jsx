@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-// import './App.css' // Removed default App.css import
-import ConfirmationModal from "./components/ConfirmationModal"; // Import the modal
+import ConfirmationModal from "./components/ConfirmationModal";
+import CharacterDetailModal from "./components/CharacterDetailModal";
 
 function App() {
   const [characters, setCharacters] = useState([]);
@@ -11,12 +11,14 @@ function App() {
   const [deletingId, setDeletingId] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
 
-  // State for the modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [characterToDelete, setCharacterToDelete] = useState(null); // Store ID of char to delete
-  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false); // Loading state for modal confirm
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [characterToDelete, setCharacterToDelete] = useState(null);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
-  const apiUrl = "/api/characters"; // Matches Flask API route
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [viewingCharacter, setViewingCharacter] = useState(null);
+
+  const apiUrl = "/api/characters";
 
   useEffect(() => {
     async function fetchCharacters() {
@@ -48,7 +50,7 @@ function App() {
     }
 
     fetchCharacters();
-  }, [apiUrl]); // Dependency array ensures this runs once on mount
+  }, [apiUrl]);
 
   const handleCreateCharacter = async () => {
     setIsCreating(true);
@@ -83,19 +85,17 @@ function App() {
     }
   };
 
-  // --- Initiate Delete Character (Opens Modal) ---
   const initiateDeleteCharacter = (characterId) => {
-    setCharacterToDelete(characterId); // Set the ID to be deleted
-    setIsModalOpen(true); // Open the modal
-    setDeleteError(null); // Clear previous delete errors when opening modal
+    setCharacterToDelete(characterId);
+    setIsConfirmModalOpen(true);
+    setDeleteError(null);
   };
 
-  // --- Confirm Delete Character (Called from Modal) ---
   const confirmDeleteCharacter = async () => {
     if (!characterToDelete) return;
 
-    setIsConfirmingDelete(true); // Show loading in modal confirm button
-    setDeletingId(characterToDelete); // Dim row in table
+    setIsConfirmingDelete(true);
+    setDeletingId(characterToDelete);
     setDeleteError(null);
 
     try {
@@ -118,30 +118,36 @@ function App() {
       setCharacters((prevChars) =>
         prevChars.filter((char) => char.id !== characterToDelete),
       );
-      closeModal(); // Close modal on success
+      closeConfirmModal();
     } catch (err) {
       console.error("Error deleting character:", err);
       setDeleteError(
         `Failed to delete character ${characterToDelete.substring(0, 8)}...: ${err.message}`,
       );
-      // Keep modal open on error? Or close and show error above table?
-      // Let's close it for now and rely on the error message above the table.
-      closeModal();
+      closeConfirmModal();
     } finally {
-      // Reset states even if modal closing is handled separately
       setDeletingId(null);
       setIsConfirmingDelete(false);
-      // setCharacterToDelete(null); // Handled by closeModal
     }
   };
 
-  // --- Cancel Delete (Closes Modal) ---
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeConfirmModal = () => {
+    setIsConfirmModalOpen(false);
     setCharacterToDelete(null);
-    setIsConfirmingDelete(false); // Ensure loading state is reset
-    // Optionally clear deleteError here if you only want it shown while modal is relevant
-    // setDeleteError(null);
+    setIsConfirmingDelete(false);
+  };
+
+  const openViewModal = (characterId) => {
+    const characterToView = characters.find((char) => char.id === characterId);
+    if (characterToView) {
+      setViewingCharacter(characterToView);
+      setIsViewModalOpen(true);
+    }
+  };
+
+  const closeViewModal = () => {
+    setIsViewModalOpen(false);
+    setViewingCharacter(null);
   };
 
   return (
@@ -211,7 +217,9 @@ function App() {
         <h2 className="text-xl font-semibold mb-0 p-4 bg-gray-100 border-b">
           Characters
         </h2>
-        {loading && <p className="p-4">Loading characters...</p>}
+        {loading && (
+          <p className="p-4 text-center text-gray-500">Loading characters...</p>
+        )}
         {!loading && !error && (
           <table className="min-w-full bg-white">
             <thead className="bg-gray-100">
@@ -257,14 +265,26 @@ function App() {
                     </td>
                     <td className="py-2 px-4 border-b text-sm whitespace-nowrap">
                       <button
+                        onClick={() => openViewModal(char.id)}
+                        className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 mr-1 text-xs font-medium"
+                      >
+                        View
+                      </button>
+                      <button
                         className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-1 text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={deletingId === char.id}
+                        disabled={
+                          deletingId === char.id ||
+                          viewingCharacter?.id === char.id
+                        }
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => initiateDeleteCharacter(char.id)}
-                        disabled={deletingId === char.id}
+                        disabled={
+                          deletingId === char.id ||
+                          viewingCharacter?.id === char.id
+                        }
                         className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs font-medium disabled:bg-red-300 disabled:cursor-not-allowed flex items-center justify-center min-w-[60px]"
                       >
                         {deletingId === char.id ? (
@@ -312,13 +332,20 @@ function App() {
         )}
       </div>
 
-      {/* --- Confirmation Modal --- */}
       <ConfirmationModal
-        isOpen={isModalOpen}
+        isOpen={isConfirmModalOpen}
         message={`Are you sure you want to delete character ${characterToDelete?.substring(0, 8)}...? This action cannot be undone.`}
         onConfirm={confirmDeleteCharacter}
-        onCancel={closeModal}
-        isConfirming={isConfirmingDelete} // Pass loading state to modal
+        onCancel={closeConfirmModal}
+        isConfirming={isConfirmingDelete}
+        confirmText="Delete"
+        title="Confirm Deletion"
+      />
+
+      <CharacterDetailModal
+        isOpen={isViewModalOpen}
+        character={viewingCharacter}
+        onClose={closeViewModal}
       />
 
       {/* Edit Form Container (Placeholder) */}

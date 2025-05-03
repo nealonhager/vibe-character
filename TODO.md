@@ -20,5 +20,9 @@
   - [x] Implement character deletion
     - [x] Add delete button and API call (Done)
     - [x] Add custom confirmation modal
+  - [x] Implement character details view
+    - [x] Add View button to table
+    - [x] Create `CharacterDetailModal` component
+    - [x] Add state and logic to `App.jsx` to show modal with character data
   - [x] Replace default Vite styling with Tailwind utility classes
   - [ ] Configure Flask to serve the React build (production)
