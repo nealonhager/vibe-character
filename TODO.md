@@ -10,3 +10,4 @@
 - [x] Add Delete endpoint (`DELETE /api/characters/<id>`) to the backend.
 - [x] Add Update endpoint (`PUT /api/characters/<id>`) to the backend.
 - [x] Fix enum dropdowns in edit form (HTML option values don't match enum values)
+- [x] Implement PUT /api/characters/<uuid:character_id> endpoint in `app/api/routes.py` for updating characters.

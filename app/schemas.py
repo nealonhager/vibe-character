@@ -31,8 +31,8 @@ class CharacterSchema(Schema):
     id = fields.UUID(dump_only=True)
     name = fields.Str(required=True)
     family_name = fields.Str(required=True)
-    # Use Method field to correctly serialize title Enum or None
-    title = fields.Method("get_serializable_title", dump_only=True)
+    # Allow string input for title, model handles conversion
+    title = fields.Str(allow_none=True)
     birth_date = fields.Date()
     birth_place = fields.Str()
     mother_id = fields.UUID()
@@ -46,8 +46,8 @@ class CharacterSchema(Schema):
     weight = fields.Int()
     blood_type = EnumField(BloodType, by_value=True)
     eye_color = EnumField(EyeColor, by_value=True)
-    # Use Method field to correctly serialize hair color Enum or "Bald"
-    hair_color = fields.Method("get_serializable_hair_color", dump_only=True)
+    # Allow string input for hair color, model handles conversion
+    hair_color = fields.Str(allow_none=True)
     race = EnumField(Race, by_value=True)
     build = EnumField(Build, by_value=True)
 
@@ -65,12 +65,12 @@ class CharacterSchema(Schema):
     occupation = fields.Str()
     primary_address = fields.Str()
 
-    # Method field implementations
-    def get_serializable_hair_color(self, obj):
-        return serialize_hair_color(obj)
-
-    def get_serializable_title(self, obj):
-        return serialize_title(obj)
+    # Method field implementations (can be removed if not needed elsewhere)
+    # def get_serializable_hair_color(self, obj):
+    #     return serialize_hair_color(obj)
+    #
+    # def get_serializable_title(self, obj):
+    #     return serialize_title(obj)
 
     # Relationships and History are often handled via separate endpoints for clarity
     # relationships = fields.Nested('RelationshipSchema', many=True, dump_only=True) # Example if RelationshipSchema exists

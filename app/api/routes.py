@@ -1,12 +1,14 @@
-from flask import jsonify
+from flask import jsonify, request
 from . import bp
 from ..models import Character
 from ..schemas import CharacterSchema
 from ..services import CharacterBuilder
 from ..extensions import db
+from marshmallow import ValidationError
 
 characters_schema = CharacterSchema(many=True)  # Renamed for clarity
 single_character_schema = CharacterSchema()  # Added for single character responses
+update_character_schema = CharacterSchema(partial=True)  # Schema for partial updates
 
 
 @bp.route("/characters", methods=["GET"])
@@ -48,3 +50,47 @@ def create_character():
 # def get_character(character_id):
 #     character = Character.query.get_or_404(character_id)
 #     return jsonify(single_character_schema.dump(character))
+
+
+@bp.route("/characters/<uuid:character_id>", methods=["PUT"])
+def update_character(character_id):
+    """Update an existing character."""
+    character = Character.query.get_or_404(character_id)
+    data = request.get_json()
+
+    # Marshmallow's load method handles validation and updates the object
+    try:
+        # Using partial=True allows updating only provided fields
+        # Load data into a dictionary, validating against the schema
+        loaded_data = update_character_schema.load(data)
+        # Iterate through validated data and update the character object
+        for key, value in loaded_data.items():
+            # Handle fields with property setters that expect Enums
+            if key == "title":
+                character.title_str = value  # Set the underlying string column
+            elif key == "hair_color":
+                character.hair_color_str = value  # Set the underlying string column
+            else:
+                setattr(character, key, value)  # Use standard setattr for other fields
+
+    except ValidationError as err:  # Catch specific Marshmallow validation errors
+        return jsonify({"message": "Validation error", "errors": err.messages}), 400
+    except Exception as err:  # Catch other potential errors during update
+        db.session.rollback()  # Rollback in case of non-validation errors during update
+        return jsonify({"message": "Error updating character", "error": str(err)}), 500
+
+    db.session.commit()
+
+    result = single_character_schema.dump(character)  # Dump the updated character
+    return jsonify(result)
+
+
+# Add DELETE endpoint
+@bp.route("/characters/<uuid:character_id>", methods=["DELETE"])
+def delete_character(character_id):
+    """Delete a character."""
+    character = Character.query.get_or_404(character_id)
+    db.session.delete(character)
+    db.session.commit()
+    # Standard practice is to return 204 No Content on successful delete
+    return "", 204
