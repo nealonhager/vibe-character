@@ -237,6 +237,9 @@ function App() {
                   Gender
                 </th>
                 <th className="py-2 px-4 border-b text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                  Occupation
+                </th>
+                <th className="py-2 px-4 border-b text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -262,6 +265,9 @@ function App() {
                     </td>
                     <td className="py-2 px-4 border-b text-sm text-gray-900">
                       {char.gender || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border-b text-sm text-gray-900">
+                      {char.occupation || "N/A"}
                     </td>
                     <td className="py-2 px-4 border-b text-sm whitespace-nowrap">
                       <button
@@ -319,7 +325,7 @@ function App() {
                 <tr>
                   {!error && (
                     <td
-                      colSpan="5"
+                      colSpan="6"
                       className="py-4 px-4 text-center text-gray-500"
                     >
                       No characters found. Create one above!
