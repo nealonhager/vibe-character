@@ -12,7 +12,6 @@ from enums import (
     Build,
     Race,
 )
-from units import Pounds
 from event import Event
 from uuid import uuid4
 from faker import Faker
@@ -68,7 +67,7 @@ class Character:
         children: list["Character"],
         gender: Gender,
         height: int,  # Height in inches
-        weight: Pounds,
+        weight: int,
         blood_type: BloodType,
         eye_color: EyeColor,
         hair_color: DyedHairColor | NaturalHairColor | str,
@@ -229,18 +228,6 @@ class CharacterFactory:
                 list(DyedHairColor if hair_type == "dyed" else NaturalHairColor)
             )
 
-        # Build
-        weight = fake.random_int(min=100, max=300)
-        strength = fake.random_int(min=1, max=10)
-        if weight < 150:
-            build = Build.SLIM
-            strength = fake.random_int(min=1, max=5)
-        elif weight > 200:
-            build = choice([Build.ATHLETIC, Build.FAT])
-            strength = fake.random_int(min=3, max=10)
-        else:
-            build = choice(list(Build))
-
         # Generate height based on gender using a normal distribution
         height = int(
             round(
@@ -250,9 +237,32 @@ class CharacterFactory:
                 )
             )
         )
-
         # Clamp height to a reasonable range (e.g., 4'0" to 8'0")
         height = max(48, min(96, height))
+
+        # Generate BMI using a normal distribution and clamp it
+        bmi = normalvariate(mu=24, sigma=4)
+        bmi = max(16, min(40, bmi))  # Clamp BMI to a reasonable range
+
+        # Calculate weight based on height and BMI, add variation, and clamp
+        base_weight = bmi * (height**2) / 703
+        weight_val = round(normalvariate(mu=base_weight, sigma=10))
+        weight_val = max(90, min(400, weight_val))  # Clamp weight
+        weight = weight_val  # Assign int directly, removed Pounds() call
+
+        # Determine build based on BMI
+        build = None
+        if bmi < 18.5:
+            build = Build.SLIM
+        elif 18.5 <= bmi < 25:
+            build = choice([Build.SLIM, Build.AVERAGE])
+        elif 25 <= bmi < 30:
+            build = choice([Build.AVERAGE, Build.FAT, Build.ATHLETIC])
+        else:  # bmi >= 30
+            build = Build.FAT
+
+        # Strength remains random for now, could be linked later
+        strength = fake.random_int(min=1, max=10)
 
         character = Character(
             id=uuid4(),
@@ -267,13 +277,13 @@ class CharacterFactory:
             children=[],
             gender=gender,
             height=height,
-            weight=weight,
+            weight=weight,  # Use the calculated int weight
             blood_type=choice(list(BloodType)),
             eye_color=choice(list(EyeColor)),
             hair_color=hair_color,
             race=choice(list(Race)),
-            build=build,
-            strength=strength,
+            build=build,  # Use the calculated build
+            strength=strength,  # Use the calculated strength
             endurance=fake.random_int(min=1, max=10),
             dexterity=fake.random_int(min=1, max=10),
             constitution=fake.random_int(min=1, max=10),
