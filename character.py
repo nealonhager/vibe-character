@@ -5,7 +5,8 @@ from enums import (
     Gender,
     BloodType,
     EyeColor,
-    HairColor,
+    NaturalHairColor,
+    DyedHairColor,
     MaleTitle,
     FemaleTitle,
     Build,
@@ -70,7 +71,7 @@ class Character:
         weight: Pounds,
         blood_type: BloodType,
         eye_color: EyeColor,
-        hair_color: HairColor,
+        hair_color: DyedHairColor | NaturalHairColor | str,
         race: Race,
         build: Build,
         strength: int,
@@ -199,9 +200,21 @@ class CharacterFactory:
             title = None
 
         # Hair
-        hair_options = list(HairColor)
-        if gender is not Gender.FEMALE:
-            hair_options.append("Bald")
+        hair_color = None
+        is_bald = False
+
+        if (
+            gender is not Gender.FEMALE
+            and choices([True, False], weights=[0.15, 0.85], k=1)[0]
+        ):
+            is_bald = True
+            hair_color = "Bald"
+
+        if not is_bald:
+            hair_type = choices(["natural", "dyed"], weights=[0.85, 0.15], k=1)[0]
+            hair_color = choice(
+                list(DyedHairColor if hair_type == "dyed" else NaturalHairColor)
+            )
 
         # Build
         weight = fake.random_int(min=100, max=300)
@@ -234,7 +247,7 @@ class CharacterFactory:
             weight=weight,
             blood_type=choice(list(BloodType)),
             eye_color=choice(list(EyeColor)),
-            hair_color=choice(hair_options),
+            hair_color=hair_color,
             race=choice(list(Race)),
             build=build,
             strength=strength,

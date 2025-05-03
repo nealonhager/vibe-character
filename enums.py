@@ -34,13 +34,16 @@ class EyeColor(Enum):
     GRAY = "Gray"
 
 
-class HairColor(Enum):
+class NaturalHairColor(Enum):
     BLACK = "Black"
     BROWN = "Brown"
     RED = "Red"
     BLONDE = "Blonde"
     GRAY = "Gray"
     WHITE = "White"
+
+
+class DyedHairColor(Enum):
     BLUE = "Blue"
     GREEN = "Green"
     PINK = "Pink"
@@ -50,18 +53,18 @@ class HairColor(Enum):
 
 class Race(Enum):
     INUIT = "Inuit"
-    NATIVE_AMERICAN = "Native American"
-    CENTRAL_AMERICAN = "Central American"
-    SOUTH_AMERICAN = "South American"
+    NATIVE_AMERICAN = "Native American (North America)"
+    CENTRAL_AMERICAN = "Central American (Mexico, Central America)"
+    SOUTH_AMERICAN = "South American (Latin America)"
     PACIFIC_ISLANDER = "Pacific Islander"
-    NORTHERN_EUROPEAN = "Northern European"
-    SOUTH_EUROPEAN = "South European"
-    EASTERN_EUROPEAN = "Eastern European"
+    NORTHERN_EUROPEAN = "Northern European (Britain, Scandinavia, Germany)"
+    SOUTH_EUROPEAN = "South European (Italy, Spain, Greece)"
+    EASTERN_EUROPEAN = "Eastern European (Russia, Poland, Ukraine)"
     MIDDLE_EASTERN = "Middle Eastern"
     INDIAN = "Indian (Indian Subcontinent)"
     SOUTH_EAST_ASIAN = "South East Asian"
     NORTH_AFRICAN = "North African"
-    AFRICAN = "African"
+    AFRICAN = "African (Sub-Saharan Africa)"
 
 
 class MaleTitle(Enum):
