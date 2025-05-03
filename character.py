@@ -183,6 +183,25 @@ class Character:
         inches = self.height % 12
         return f"A {feet}'{inches}\" tall, {self.weight} lbs, {self.build.value} build, {self.hair_color.value if not isinstance(self.hair_color, str) else self.hair_color} hair, {self.eye_color.value} eyes, {self.gender.value}, of {self.race.value} descent, who is a {self.occupation}."
 
+    @staticmethod
+    def generate_name(gender: Gender):
+        fake = Faker()
+        if gender == Gender.MALE:
+            return fake.first_name_male()
+        elif gender == Gender.FEMALE:
+            return fake.first_name_female()
+        else:
+            return fake.first_name()
+
+    @staticmethod
+    def generate_title(gender: Gender):
+        if gender == Gender.MALE:
+            return choice(list(MaleTitle) + [None])
+        elif gender == Gender.FEMALE:
+            return choice(list(FemaleTitle) + [None])
+        else:
+            return choice(list(MaleTitle) + list(FemaleTitle) + [None])
+
 
 class CharacterFactory:
     def create_random_adult_character(self) -> Character:
@@ -192,14 +211,6 @@ class CharacterFactory:
             weights=[0.45, 0.5, 0.03, 0.02],
             k=1,
         )[0]
-
-        # Title
-        if gender == Gender.MALE:
-            title = choice(list(MaleTitle))
-        elif gender == Gender.FEMALE:
-            title = choice(list(FemaleTitle))
-        else:
-            title = None
 
         # Hair
         hair_color = None
@@ -245,9 +256,9 @@ class CharacterFactory:
 
         character = Character(
             id=uuid4(),
-            name=fake.first_name(),
+            name=Character.generate_name(gender),
             family_name=fake.last_name(),
-            title=title,
+            title=Character.generate_title(gender),
             birth_date=fake.date_of_birth(minimum_age=18, maximum_age=60),
             birth_place=fake.city(),
             mother=None,
