@@ -202,99 +202,352 @@ class Character:
             return choice(list(MaleTitle) + list(FemaleTitle) + [None])
 
 
-class CharacterFactory:
-    def create_random_adult_character(self) -> Character:
+class CharacterBuilder:
+    def __init__(self):
+        # Initialize all attributes to None or a sensible default
+        self._id = None
+        self._name = None
+        self._family_name = None
+        self._title = None
+        self._birth_date = None
+        self._birth_place = None
+        self._mother = None
+        self._father = None
+        self._siblings = []
+        self._children = []
+        self._gender = None
+        self._height = None  # inches
+        self._weight = None  # lbs
+        self._blood_type = None
+        self._eye_color = None
+        self._hair_color = None
+        self._race = None
+        self._build = None
+        self._strength = None
+        self._endurance = None
+        self._dexterity = None
+        self._constitution = None
+        self._intelligence = None
+        self._wisdom = None
+        self._charisma = None
+        self._traits = None
+        self._occupation = None
+        self._hobbies = []
+        self._relationships = []
+        self._history = []
+        self._primary_address = None
+        self._min_age = 18  # Default adult
+        self._max_age = 60  # Default adult
+        self._is_bald = None  # Track baldness separately
+
+    # --- Setter Methods ---
+    def set_id(self, val: uuid4) -> "CharacterBuilder":
+        self._id = val
+        return self
+
+    def set_name(self, val: str) -> "CharacterBuilder":
+        self._name = val
+        return self
+
+    def set_family_name(self, val: str) -> "CharacterBuilder":
+        self._family_name = val
+        return self
+
+    def set_title(self, val: MaleTitle | FemaleTitle | None) -> "CharacterBuilder":
+        self._title = val
+        return self
+
+    def set_birth_date(self, val: datetime) -> "CharacterBuilder":
+        self._birth_date = val
+        # Clear age range if specific date is set
+        self._min_age = None
+        self._max_age = None
+        return self
+
+    def set_age_range(self, min_age: int, max_age: int) -> "CharacterBuilder":
+        self._min_age = min_age
+        self._max_age = max_age
+        # Clear specific birth date if age range is set
+        self._birth_date = None
+        return self
+
+    def set_birth_place(self, val: str) -> "CharacterBuilder":
+        self._birth_place = val
+        return self
+
+    def set_mother(self, val: "Character") -> "CharacterBuilder":
+        self._mother = val
+        return self
+
+    def set_father(self, val: "Character") -> "CharacterBuilder":
+        self._father = val
+        return self
+
+    def set_siblings(self, val: list["Character"]) -> "CharacterBuilder":
+        self._siblings = val
+        return self
+
+    def add_sibling(self, val: "Character") -> "CharacterBuilder":
+        self._siblings.append(val)
+        return self
+
+    def set_children(self, val: list["Character"]) -> "CharacterBuilder":
+        self._children = val
+        return self
+
+    def add_child(self, val: "Character") -> "CharacterBuilder":
+        self._children.append(val)
+        return self
+
+    def set_gender(self, val: Gender) -> "CharacterBuilder":
+        self._gender = val
+        return self
+
+    def set_height(self, val: int) -> "CharacterBuilder":
+        self._height = val
+        return self
+
+    def set_weight(self, val: int) -> "CharacterBuilder":
+        self._weight = val
+        return self
+
+    def set_blood_type(self, val: BloodType) -> "CharacterBuilder":
+        self._blood_type = val
+        return self
+
+    def set_eye_color(self, val: EyeColor) -> "CharacterBuilder":
+        self._eye_color = val
+        return self
+
+    def set_hair_color(
+        self, val: DyedHairColor | NaturalHairColor | str
+    ) -> "CharacterBuilder":
+        self._hair_color = val
+        if val == "Bald":
+            self._is_bald = True
+        else:
+            self._is_bald = False  # Explicitly not bald if color set
+        return self
+
+    def set_race(self, val: Race) -> "CharacterBuilder":
+        self._race = val
+        return self
+
+    def set_build(self, val: Build) -> "CharacterBuilder":
+        self._build = val
+        return self
+
+    def set_strength(self, val: int) -> "CharacterBuilder":
+        self._strength = val
+        return self
+
+    def set_endurance(self, val: int) -> "CharacterBuilder":
+        self._endurance = val
+        return self
+
+    def set_dexterity(self, val: int) -> "CharacterBuilder":
+        self._dexterity = val
+        return self
+
+    def set_constitution(self, val: int) -> "CharacterBuilder":
+        self._constitution = val
+        return self
+
+    def set_intelligence(self, val: int) -> "CharacterBuilder":
+        self._intelligence = val
+        return self
+
+    def set_wisdom(self, val: int) -> "CharacterBuilder":
+        self._wisdom = val
+        return self
+
+    def set_charisma(self, val: int) -> "CharacterBuilder":
+        self._charisma = val
+        return self
+
+    def set_traits(self, val: list[str]) -> "CharacterBuilder":
+        self._traits = val
+        return self
+
+    def set_occupation(self, val: str) -> "CharacterBuilder":
+        self._occupation = val
+        return self
+
+    def set_hobbies(self, val: list[str]) -> "CharacterBuilder":
+        self._hobbies = val
+        return self
+
+    def add_hobby(self, val: str) -> "CharacterBuilder":
+        self._hobbies.append(val)
+        return self
+
+    def set_relationships(self, val: list["Relationship"]) -> "CharacterBuilder":
+        self._relationships = val
+        return self
+
+    def add_relationship(self, val: "Relationship") -> "CharacterBuilder":
+        self._relationships.append(val)
+        return self
+
+    def set_history(self, val: list[Event]) -> "CharacterBuilder":
+        self._history = val
+        return self
+
+    def add_history_event(self, val: Event) -> "CharacterBuilder":
+        self._history.append(val)
+        return self
+
+    def set_primary_address(self, val: str) -> "CharacterBuilder":
+        self._primary_address = val
+        return self
+
+    def set_bald(self, val: bool) -> "CharacterBuilder":
+        self._is_bald = val
+        if val:
+            self._hair_color = "Bald"
+        # If set to False, hair color generation will proceed normally
+        return self
+
+    def build(self) -> Character:
         fake = Faker()
-        gender = choices(
-            [Gender.MALE, Gender.FEMALE, Gender.INTERSEX, Gender.OTHER],
-            weights=[0.45, 0.5, 0.03, 0.02],
-            k=1,
-        )[0]
 
-        # Hair
-        hair_color = None
-        is_bald = False
+        # --- Attribute Generation (Order Matters!) ---
 
-        if (
-            gender is not Gender.FEMALE
-            and choices([True, False], weights=[0.15, 0.85], k=1)[0]
-        ):
-            is_bald = True
-            hair_color = "Bald"
+        _id = self._id or uuid4()
+        _gender = (
+            self._gender
+            or choices(
+                [Gender.MALE, Gender.FEMALE, Gender.INTERSEX, Gender.OTHER],
+                weights=[0.45, 0.5, 0.03, 0.02],
+                k=1,
+            )[0]
+        )
+        _name = self._name or Character.generate_name(_gender)
+        _family_name = self._family_name or fake.last_name()
+        _title = (
+            self._title
+            if self._title is not None
+            else Character.generate_title(_gender)
+        )
 
-        if not is_bald:
+        if self._birth_date:
+            _birth_date = self._birth_date
+        elif self._min_age is not None and self._max_age is not None:
+            _birth_date = fake.date_of_birth(
+                minimum_age=self._min_age, maximum_age=self._max_age
+            )
+        else:
+            # Default if neither date nor range is set (e.g. 0-100)
+            _birth_date = fake.date_of_birth(minimum_age=0, maximum_age=100)
+
+        _birth_place = self._birth_place or fake.city()
+
+        # --- Hair Generation ---
+        _hair_color = self._hair_color
+        _is_bald = self._is_bald
+        if _is_bald is None:  # Only determine randomly if not explicitly set
+            if (
+                _gender is not Gender.FEMALE
+                and choices([True, False], weights=[0.15, 0.85], k=1)[0]
+            ):
+                _is_bald = True
+            else:
+                _is_bald = False
+
+        if _is_bald:
+            _hair_color = "Bald"
+        elif _hair_color is None:  # Only generate if not bald and not explicitly set
             hair_type = choices(["natural", "dyed"], weights=[0.85, 0.15], k=1)[0]
-            hair_color = choice(
+            _hair_color = choice(
                 list(DyedHairColor if hair_type == "dyed" else NaturalHairColor)
             )
+        # If _hair_color was already set (and not "Bald"), use the set value.
 
-        # Generate height based on gender using a normal distribution
-        height = int(
-            round(
-                normalvariate(
-                    mu=63 if gender == Gender.FEMALE else 68,  # Mean height in inches
-                    sigma=3.5,  # Standard deviation in inches
+        # --- Height, Weight, Build Generation ---
+        _height = self._height
+        _weight = self._weight
+        _build = self._build
+        _bmi = None
+
+        if _height is None:
+            # Generate height based on gender
+            _height = int(
+                round(
+                    normalvariate(mu=63 if _gender == Gender.FEMALE else 68, sigma=3.5)
                 )
             )
+            _height = max(48, min(96, _height))  # Clamp height
+
+        if (
+            _weight is None or _build is None
+        ):  # Need to calculate BMI if weight or build isn't set
+            # Generate BMI
+            _bmi = normalvariate(mu=24, sigma=4)
+            _bmi = max(16, min(40, _bmi))  # Clamp BMI
+
+        if _weight is None:
+            # Calculate weight based on height and BMI
+            base_weight = _bmi * (_height**2) / 703
+            _weight = round(normalvariate(mu=base_weight, sigma=10))
+            _weight = max(90, min(400, _weight))  # Clamp weight
+
+        if _build is None:
+            # Determine build based on BMI
+            if _bmi < 18.5:
+                _build = Build.SLIM
+            elif 18.5 <= _bmi < 25:
+                _build = choice([Build.SLIM, Build.AVERAGE])
+            elif 25 <= _bmi < 30:
+                _build = choice([Build.AVERAGE, Build.FAT, Build.ATHLETIC])
+            else:  # bmi >= 30
+                _build = Build.FAT
+
+        # --- Other Attributes ---
+        _strength = self._strength or fake.random_int(min=1, max=10)
+        _endurance = self._endurance or fake.random_int(min=1, max=10)
+        _dexterity = self._dexterity or fake.random_int(min=1, max=10)
+        _constitution = self._constitution or fake.random_int(min=1, max=10)
+        _intelligence = self._intelligence or fake.random_int(min=1, max=10)
+        _wisdom = self._wisdom or fake.random_int(min=1, max=10)
+        _charisma = self._charisma or fake.random_int(min=1, max=10)
+        _traits = self._traits or [choice(TRAITS_LIST_1), choice(TRAITS_LIST_2)]
+        _occupation = self._occupation or fake.job()
+        _primary_address = self._primary_address or fake.address()
+        _blood_type = self._blood_type or choice(list(BloodType))
+        _eye_color = self._eye_color or choice(list(EyeColor))
+        _race = self._race or choice(list(Race))
+
+        # Instantiate the character
+        return Character(
+            id=_id,
+            name=_name,
+            family_name=_family_name,
+            title=_title,
+            birth_date=_birth_date,
+            birth_place=_birth_place,
+            mother=self._mother,
+            father=self._father,
+            siblings=self._siblings,
+            children=self._children,
+            gender=_gender,
+            height=_height,
+            weight=_weight,
+            blood_type=_blood_type,
+            eye_color=_eye_color,
+            hair_color=_hair_color,
+            race=_race,
+            build=_build,
+            strength=_strength,
+            endurance=_endurance,
+            dexterity=_dexterity,
+            constitution=_constitution,
+            intelligence=_intelligence,
+            wisdom=_wisdom,
+            charisma=_charisma,
+            traits=_traits,
+            occupation=_occupation,
+            hobbies=self._hobbies,
+            relationships=self._relationships,
+            history=self._history,
+            primary_address=_primary_address,
         )
-        # Clamp height to a reasonable range (e.g., 4'0" to 8'0")
-        height = max(48, min(96, height))
-
-        # Generate BMI using a normal distribution and clamp it
-        bmi = normalvariate(mu=24, sigma=4)
-        bmi = max(16, min(40, bmi))  # Clamp BMI to a reasonable range
-
-        # Calculate weight based on height and BMI, add variation, and clamp
-        base_weight = bmi * (height**2) / 703
-        weight_val = round(normalvariate(mu=base_weight, sigma=10))
-        weight_val = max(90, min(400, weight_val))  # Clamp weight
-        weight = weight_val  # Assign int directly, removed Pounds() call
-
-        # Determine build based on BMI
-        build = None
-        if bmi < 18.5:
-            build = Build.SLIM
-        elif 18.5 <= bmi < 25:
-            build = choice([Build.SLIM, Build.AVERAGE])
-        elif 25 <= bmi < 30:
-            build = choice([Build.AVERAGE, Build.FAT, Build.ATHLETIC])
-        else:  # bmi >= 30
-            build = Build.FAT
-
-        # Strength remains random for now, could be linked later
-        strength = fake.random_int(min=1, max=10)
-
-        character = Character(
-            id=uuid4(),
-            name=Character.generate_name(gender),
-            family_name=fake.last_name(),
-            title=Character.generate_title(gender),
-            birth_date=fake.date_of_birth(minimum_age=18, maximum_age=60),
-            birth_place=fake.city(),
-            mother=None,
-            father=None,
-            siblings=[],
-            children=[],
-            gender=gender,
-            height=height,
-            weight=weight,  # Use the calculated int weight
-            blood_type=choice(list(BloodType)),
-            eye_color=choice(list(EyeColor)),
-            hair_color=hair_color,
-            race=choice(list(Race)),
-            build=build,  # Use the calculated build
-            strength=strength,  # Use the calculated strength
-            endurance=fake.random_int(min=1, max=10),
-            dexterity=fake.random_int(min=1, max=10),
-            constitution=fake.random_int(min=1, max=10),
-            intelligence=fake.random_int(min=1, max=10),
-            wisdom=fake.random_int(min=1, max=10),
-            charisma=fake.random_int(min=1, max=10),
-            traits=[choice(TRAITS_LIST_1), choice(TRAITS_LIST_2)],
-            occupation=fake.job(),
-            hobbies=[],
-            relationships=[],
-            history=[],
-            primary_address=fake.address(),
-        )
-        return character
