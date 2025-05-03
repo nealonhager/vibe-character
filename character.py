@@ -1,8 +1,43 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
+from random import choice
+from enums import Gender, BloodType, EyeColor, HairColor, MaleTitle, FemaleTitle
+from units import Pounds, Height
+from event import Event
 
 if TYPE_CHECKING:
     from relationship import Relationship
+
+# Define the trait lists
+TRAITS_LIST_1 = [
+    "Honest",
+    "Deceiver",
+    "Loyal",
+    "Cowardly",
+    "Brave",
+    "Vengeful",
+    "Merciful",
+    "Impulsive",
+    "Reasonable",
+    "Lazy",
+    "Diligent",
+    "Naive",
+]
+
+TRAITS_LIST_2 = [
+    "Cruel",
+    "Friendly",
+    "Angry",
+    "Optimistic",
+    "Pessimistic",
+    "Arrogant",
+    "Humble",
+    "Snob",
+    "Respectful",
+    "Greedy",
+    "Generous",
+    "Kind",
+]
 
 
 class Character:
@@ -11,58 +46,70 @@ class Character:
         id: int,
         name: str,
         family_name: str,
+        title: MaleTitle | FemaleTitle | None,
         birth_date: datetime,
         birth_place: str,
         mother: "Character",
         father: "Character",
-        gender: str,
-        height: int,
-        weight: int,
-        blood_type: str,
-        eye_color: str,
-        hair_color: str,
+        gender: Gender,
+        height: Height,
+        weight: Pounds,
+        blood_type: BloodType,
+        eye_color: EyeColor,
+        hair_color: HairColor,
         strength: int,
         dexterity: int,
         constitution: int,
         intelligence: int,
         wisdom: int,
         charisma: int,
+        traits: list[str],
         occupation: str,
         hobbies: list[str],
         relationships: list["Relationship"],
+        history: list[Event],
     ):
         self.id: int = id
 
         # Identity
-        self.name: str = name
-        self.family_name: str = family_name
+        self.name = name
+        self.family_name = family_name
+        self.title = title
 
         # Lineage
-        self.birth_date: datetime = birth_date
-        self.birth_place: str = birth_place
-        self.mother: "Character" = mother
-        self.father: "Character" = father
+        self.birth_date = birth_date
+        self.birth_place = birth_place
+        self.mother = mother
+        self.father = father
 
         # Physical
-        self.gender: str = gender
-        self.height: int = height
-        self.weight: int = weight
-        self.blood_type: str = blood_type
-        self.eye_color: str = eye_color
-        self.hair_color: str = hair_color
+        self.gender = gender
+        self.height = height
+        self.weight = weight
+        self.blood_type = blood_type
+        self.eye_color = eye_color
+        self.hair_color = hair_color
 
         # Abilities
-        self.strength: int = strength
-        self.dexterity: int = dexterity
-        self.constitution: int = constitution
-        self.intelligence: int = intelligence
-        self.wisdom: int = wisdom
-        self.charisma: int = charisma
+        self.strength = strength
+        self.dexterity = dexterity
+        self.constitution = constitution
+        self.intelligence = intelligence
+        self.wisdom = wisdom
+        self.charisma = charisma
+
+        # Traits
+        if traits:
+            self.traits = traits
+        else:
+            trait1 = choice(TRAITS_LIST_1)
+            trait2 = choice(TRAITS_LIST_2)
+            self.traits = [trait1, trait2]
 
         # Other
-        self.occupation: str = occupation
-        self.hobbies: list[str] = hobbies
-        self.relationships: list["Relationship"] = relationships
+        self.occupation = occupation
+        self.hobbies = hobbies
+        self.relationships = relationships
 
         # Events
-        self.history: list[str] = []
+        self.history = history
