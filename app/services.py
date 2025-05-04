@@ -22,6 +22,7 @@ from enums import (
     FemaleTitle,
     Build,
     Race,
+    Hobbies,
 )
 
 # Define the trait lists (consider moving these to a config or constants file)
@@ -353,8 +354,9 @@ class CharacterBuilder:
         _eye_color = self._eye_color or choice(list(EyeColor))
         _race = self._race or choice(list(Race))
         _hobbies = self._hobbies or [
-            fake.word() for _ in range(fake.random_int(min=0, max=3))
-        ]  # Generate hobbies if empty
+            hobby.value
+            for hobby in choices(list(Hobbies), k=fake.random_int(min=1, max=3))
+        ]
 
         # Instantiate the SQLAlchemy model
         character_instance = Character(
