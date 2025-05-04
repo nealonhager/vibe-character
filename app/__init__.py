@@ -40,4 +40,8 @@ def create_app(config_class=Config):
         # Add models and other useful variables to the shell context
         return {"db": db, "Character": models.Character, "Event": models.Event}
 
+    # Create database tables if they don't exist
+    with app.app_context():
+        db.create_all()
+
     return app

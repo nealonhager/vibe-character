@@ -2,7 +2,7 @@ from .extensions import db
 import uuid
 from sqlalchemy import CheckConstraint
 from faker import Faker
-import datetime
+from datetime import datetime, timezone
 
 # Import Enums (adjust path if enums.py is moved)
 from enums import (
@@ -126,12 +126,22 @@ class Character(db.Model):
     occupation = db.Column(db.String(100), nullable=True)
     primary_address = db.Column(db.Text, nullable=True)
 
-    # Relationships initiated by this character
+    # NEW FIELD
+    creation_date = db.Column(
+        db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc)
+    )  # Added creation date
+
+    # Relationships - Define relationships after basic columns
     relationships = db.relationship(
         "Relationship",
-        foreign_keys="Relationship.character1_id",
+        foreign_keys="[Relationship.character1_id]",
         back_populates="character1",
-        lazy="dynamic",
+        cascade="all, delete-orphan",
+    )
+    related_to = db.relationship(
+        "Relationship",
+        foreign_keys="[Relationship.character2_id]",
+        back_populates="character2",
         cascade="all, delete-orphan",
     )
 
@@ -261,8 +271,8 @@ class Relationship(db.Model):
     character2 = db.relationship(
         "Character",
         foreign_keys=[character2_id],
-        backref=db.backref("related_as_char2", lazy="dynamic"),
-    )  # Example backref
+        back_populates="related_to",
+    )
 
     # Ensure character1 and character2 are not the same
     __table_args__ = (

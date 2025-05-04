@@ -35,6 +35,10 @@
 - [x] Add error handling and display messages to the user.
 - [x] Add a copy description button to the character card.
 - [x] Unify styling of `ConfirmationModal.jsx` with the rest of the app (`App.jsx` as reference).
+- [ ] Add relationships between characters (e.g., family, friends, rivals)
+- [ ] Implement a way to generate character backstories or bios
+- [ ] Add more attributes to characters (e.g., skills, flaws, goals)
+- [x] Add `creation_date` to Character model and create migration `ef0f72190d66`
 
 # Future Ideas
 
@@ -42,3 +46,20 @@
   - [x] Add `POST /api/characters/bulk-generate` endpoint to backend.
   - [x] Add bulk generation form (Occupation, Count) to frontend (`App.jsx`).
   - [x] Implement `handleBulkCreate` function in frontend to call API and update state.
+
+# TODO List
+
+- [x] Setup Flask-SQLAlchemy and Flask-Migrate
+- [x] Define Character and Event models
+- [x] Create initial migration
+- [x] Setup API blueprint
+- [x] Implement basic CRUD endpoints for Character
+- [x] Implement basic CRUD endpoints for Event
+- [x] Add relationship between Character and Event
+- [x] Update migrations for relationship
+- [x] Update API endpoints to handle relationships
+- [x] Add frontend structure (basic HTML/JS)
+- [x] Fetch and display characters on frontend
+- [x] Add form to create characters
+- [x] Implement frontend character creation logic
+- [x] Ensure DB tables are created on startup if they don't exist
