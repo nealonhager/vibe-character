@@ -17,6 +17,7 @@ def get_characters():
     """Get a list of all characters."""
     all_characters = Character.query.all()
     result = characters_schema.dump(all_characters)
+    print(result)
     return jsonify(result)
 
 

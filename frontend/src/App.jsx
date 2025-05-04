@@ -24,6 +24,7 @@ function App() {
   const [isSaving, setIsSaving] = useState(false);
   const [editError, setEditError] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [copyError, setCopyError] = useState(null);
 
   // --- Bulk Create State ---
   const [bulkOccupation, setBulkOccupation] = useState("");
@@ -58,6 +59,7 @@ function App() {
         throw new Error(errorMsg);
       }
       const data = await response.json();
+      console.log("Fetched characters:", data);
       setCharacters(data);
     } catch (err) {
       console.error("Error fetching characters:", err);
@@ -115,6 +117,7 @@ function App() {
     setCharacterToDelete(characterId);
     setIsConfirmModalOpen(true);
     setDeleteError(null);
+    setCopyError(null);
   };
 
   const confirmDeleteCharacter = async () => {
@@ -124,6 +127,7 @@ function App() {
     setDeletingId(characterToDelete);
     setDeleteError(null);
     setEditError(null);
+    setCopyError(null);
 
     try {
       const response = await fetch(`${apiUrl}/${characterToDelete}`, {
@@ -182,6 +186,7 @@ function App() {
     if (characterToEdit) {
       setEditingCharacter(characterToEdit);
       setEditError(null);
+      setCopyError(null);
       setIsEditModalOpen(true);
     }
   };
@@ -195,6 +200,7 @@ function App() {
   const handleUpdateCharacter = async (characterId, updatedData) => {
     setIsSaving(true);
     setEditError(null);
+    setCopyError(null);
     console.log("Saving data:", updatedData);
     try {
       const response = await fetch(`${apiUrl}/${characterId}`, {
@@ -235,6 +241,7 @@ function App() {
   };
 
   const handleCopyDescription = async (character) => {
+    console.log("Copying description:", character);
     if (!character || !character.physical_description) return;
 
     try {
@@ -260,9 +267,10 @@ function App() {
     setIsBulkCreating(true);
     setBulkCreateError(null);
     setBulkCreateSuccess(null);
-    setDeleteError(null); // Clear other errors
+    setDeleteError(null);
     setEditError(null);
     setCreateError(null);
+    setCopyError(null);
 
     try {
       const response = await fetch(bulkApiUrl, {
@@ -323,6 +331,11 @@ function App() {
       {editError && (
         <p className="p-4 text-red-600 bg-red-100 border border-red-400 rounded mb-4">
           Error updating character: {editError}
+        </p>
+      )}
+      {copyError && (
+        <p className="p-4 text-yellow-700 bg-yellow-100 border border-yellow-400 rounded mb-4">
+          Copy Warning: {copyError}
         </p>
       )}
       {/* --- Bulk Create Messages --- */}

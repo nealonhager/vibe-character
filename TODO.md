@@ -63,3 +63,4 @@
 - [x] Add form to create characters
 - [x] Implement frontend character creation logic
 - [x] Ensure DB tables are created on startup if they don't exist
+- [x] Investigate why `physical_description` is not included in the `/characters` GET API response (check `CharacterSchema` in `app/schemas.py`). (Fixed by using `fields.Method`)

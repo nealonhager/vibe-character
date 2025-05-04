@@ -66,28 +66,13 @@ class CharacterSchema(Schema):
     primary_address = fields.Str()
 
     # Add the generated physical description (read-only)
-    physical_description = fields.Str(dump_only=True)
+    physical_description = fields.Method("get_physical_description", dump_only=True)
 
-    # Method field implementations (can be removed if not needed elsewhere)
-    # def get_serializable_hair_color(self, obj):
-    #     return serialize_hair_color(obj)
-    #
-    # def get_serializable_title(self, obj):
-    #     return serialize_title(obj)
+    creation_date = fields.DateTime(dump_only=True)
 
-    # Relationships and History are often handled via separate endpoints for clarity
-    # relationships = fields.Nested('RelationshipSchema', many=True, dump_only=True) # Example if RelationshipSchema exists
-    # history = fields.Nested('EventSchema', many=True, dump_only=True)          # Example if EventSchema exists
+    def get_physical_description(self, obj):
+        # Access the @property from the Character model
+        return obj.physical_description
 
-
-# Simple Schemas for potential nesting (add details as needed)
-# class RelationshipSchema(Schema):
-#     id = fields.Int(dump_only=True)
-#     character2_id = fields.UUID()
-#     relationship_type = EnumField(RelationshipType, by_value=True)
-#     status = EnumField(RelationshipStatus, by_value=True)
-#     start_date = fields.Date()
-
-# class EventSchema(Schema):
-#     id = fields.Int(dump_only=True)
-#     name = fields.Str()
+    # Example validation: Ensure name and family_name are provided
+    # @validates_schema

@@ -2,7 +2,7 @@ from .extensions import db
 import uuid
 from sqlalchemy import CheckConstraint
 from faker import Faker
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 
 # Import Enums (adjust path if enums.py is moved)
 from enums import (
@@ -169,13 +169,7 @@ class Character(db.Model):
         # Logic to return MaleTitle/FemaleTitle enum or None based on title_str
         if not self.title_str:
             return None
-        try:
-            return MaleTitle(self.title_str)
-        except ValueError:
-            try:
-                return FemaleTitle(self.title_str)
-            except ValueError:
-                return None  # Or raise error
+        return self.title_str
 
     @title.setter
     def title(self, value: MaleTitle | FemaleTitle | None):
@@ -188,13 +182,7 @@ class Character(db.Model):
             return "Bald"
         if not self.hair_color_str:
             return None
-        try:
-            return NaturalHairColor(self.hair_color_str)
-        except ValueError:
-            try:
-                return DyedHairColor(self.hair_color_str)
-            except ValueError:
-                return self.hair_color_str  # Or raise error
+        return self.hair_color_str
 
     @hair_color.setter
     def hair_color(self, value: NaturalHairColor | DyedHairColor | str | None):
@@ -208,7 +196,7 @@ class Character(db.Model):
         """Calculates the character's age based on birth_date."""
         if not self.birth_date:
             return None
-        today = datetime.date.today()
+        today = date.today()
         # Calculate age based on year, adjusting for month and day
         years = today.year - self.birth_date.year
         if (today.month, today.day) < (self.birth_date.month, self.birth_date.day):
@@ -216,12 +204,25 @@ class Character(db.Model):
         return years
 
     @property
-    def physical_description(self):
+    def physical_description(self) -> str:
         feet = self.height // 12
         inches = self.height % 12
-        return f"A {feet}'{inches}\" tall, {self.weight} lbs, {self.age} years old, {self.build.value} build, {self.hair_color.value if not isinstance(self.hair_color, str) else self.hair_color} hair, {self.eye_color.value} eyes, {self.gender.value}, of {self.race.value} descent, who is a {self.occupation}."
+        height_str = f"{feet}'{inches}\" tall"
+        weight_str = f"{self.weight} lbs"
+        age_str = f"{self.age} years old"
+        build_str = f"{self.build.value} build"
+        hair_color_str = (
+            self.hair_color.value
+            if not isinstance(self.hair_color, str)
+            else self.hair_color
+        )
+        eye_color_str = self.eye_color.value
+        gender_str = self.gender.value
+        race_str = self.race.value
+        occupation_str = self.occupation
+        return f"A {height_str}, {weight_str}, {age_str}, {build_str}, {hair_color_str} hair, {eye_color_str} eyes, {gender_str}, of {race_str} descent, who is a {occupation_str}."
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Character {self.name} {self.family_name} ({self.id})>"
 
 
