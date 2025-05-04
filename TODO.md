@@ -34,12 +34,8 @@
 - [x] Add loading states for asynchronous operations.
 - [x] Add error handling and display messages to the user.
 - [x] Add a copy description button to the character card.
-- [ ] Unify styling of `ConfirmationModal.jsx` with the rest of the app (`App.jsx` as reference).
-- [ ] Refactor API calls into a separate service/hook.
-- [ ] Add input validation to the edit form.
-- [ ] Improve accessibility (ARIA attributes, keyboard navigation).
-- [ ] Add pagination or infinite scrolling for large character lists.
-- [ ] Consider state management library (like Redux or Zustand) for complex state.
-- [ ] Write unit/integration tests.
+- [x] Unify styling of `ConfirmationModal.jsx` with the rest of the app (`App.jsx` as reference).
 
 # Future Ideas
+
+- Create a page that allows you to bulk generate characters with the same occupation. This would be useful if we want to create 50 farmers
