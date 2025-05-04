@@ -12,7 +12,6 @@
   - [x] Set up basic React + Tailwind project structure (Done)
   - [x] Create main `App.jsx` component
   - [x] Fetch and display characters in a table (`CharacterTable.jsx`)
-  - [ ] Implement character creation (should populate a random user, and open in edit mode) (`CharacterCreateForm.jsx`)
   - [x] Implement character editing (`CharacterEditForm.jsx`)
   - [x] Implement character deletion
     - [x] Add delete button and API call (Done)
@@ -21,4 +20,8 @@
     - [x] Add View button to table
     - [x] Create `CharacterDetailModal` component
     - [x] Add state and logic to `App.jsx` to show modal with character data
+  - [x] Add more columns to the main character table (Race, Occupation, Birth Place)
   - [x] Replace default Vite styling with Tailwind utility classes
+  - [x] Add 'Copy Description' button to character table actions
+
+# Future Ideas

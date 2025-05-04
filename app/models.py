@@ -192,6 +192,20 @@ class Character(db.Model):
         else:
             self.hair_color_str = value  # Handles "Bald" or None
 
+    # Helper function for height formatting
+    def _format_height(self):
+        if self.height is None:
+            return None
+        feet = self.height // 12
+        inches = self.height % 12
+        return f"{feet}'{inches}\""
+
+    @property
+    def physical_description(self):
+        feet = self.height // 12
+        inches = self.height % 12
+        return f"A {feet}'{inches}\" tall, {self.weight} lbs, {self.build.value} build, {self.hair_color.value if not isinstance(self.hair_color, str) else self.hair_color} hair, {self.eye_color.value} eyes, {self.gender.value}, of {self.race.value} descent, who is a {self.occupation}."
+
     def __repr__(self):
         return f"<Character {self.name} {self.family_name} ({self.id})>"
 

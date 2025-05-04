@@ -23,6 +23,7 @@ function App() {
   const [editingCharacter, setEditingCharacter] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [editError, setEditError] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
 
   const apiUrl = "/api/characters";
 
@@ -216,6 +217,20 @@ function App() {
     }
   };
 
+  const handleCopyDescription = async (character) => {
+    if (!character || !character.physical_description) return;
+
+    try {
+      await navigator.clipboard.writeText(character.physical_description);
+      setCopiedId(character.id);
+      setTimeout(() => {
+        setCopiedId(null);
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6 text-center">
@@ -308,6 +323,15 @@ function App() {
                   Gender
                 </th>
                 <th className="py-2 px-4 border-b text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                  Age
+                </th>
+                <th className="py-2 px-4 border-b text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                  Race
+                </th>
+                <th className="py-2 px-4 border-b text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                  Birth Place
+                </th>
+                <th className="py-2 px-4 border-b text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
                   Occupation
                 </th>
                 <th className="py-2 px-4 border-b text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
@@ -338,6 +362,35 @@ function App() {
                       {char.gender || "N/A"}
                     </td>
                     <td className="py-2 px-4 border-b text-sm text-gray-900">
+                      {char.birth_date
+                        ? (() => {
+                            try {
+                              const birthDate = new Date(char.birth_date);
+                              const today = new Date();
+                              let age =
+                                today.getFullYear() - birthDate.getFullYear();
+                              const m = today.getMonth() - birthDate.getMonth();
+                              if (
+                                m < 0 ||
+                                (m === 0 &&
+                                  today.getDate() < birthDate.getDate())
+                              ) {
+                                age--;
+                              }
+                              return age;
+                            } catch (e) {
+                              return "N/A"; // Handle invalid date format
+                            }
+                          })()
+                        : "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border-b text-sm text-gray-900">
+                      {char.race || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border-b text-sm text-gray-900">
+                      {char.birth_place || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border-b text-sm text-gray-900">
                       {char.occupation || "N/A"}
                     </td>
                     <td className="py-2 px-4 border-b text-sm whitespace-nowrap">
@@ -361,6 +414,18 @@ function App() {
                         className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-1 text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Edit
+                      </button>
+                      <button
+                        onClick={() => handleCopyDescription(char)}
+                        disabled={
+                          deletingId === char.id ||
+                          editingCharacter?.id === char.id ||
+                          viewingCharacter?.id === char.id ||
+                          copiedId === char.id
+                        }
+                        className={`px-2 py-1 rounded mr-1 text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed ${copiedId === char.id ? "bg-green-500 text-white" : "bg-gray-500 text-white hover:bg-gray-600"}`}
+                      >
+                        {copiedId === char.id ? "Copied!" : "Copy Desc"}
                       </button>
                       <button
                         onClick={() => initiateDeleteCharacter(char.id)}
@@ -403,7 +468,7 @@ function App() {
                 <tr>
                   {!error && (
                     <td
-                      colSpan="6"
+                      colSpan="9"
                       className="py-4 px-4 text-center text-gray-500"
                     >
                       No characters found. Create one above!

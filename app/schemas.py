@@ -65,6 +65,9 @@ class CharacterSchema(Schema):
     occupation = fields.Str()
     primary_address = fields.Str()
 
+    # Add the generated physical description (read-only)
+    physical_description = fields.Str(dump_only=True)
+
     # Method field implementations (can be removed if not needed elsewhere)
     # def get_serializable_hair_color(self, obj):
     #     return serialize_hair_color(obj)
