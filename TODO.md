@@ -1,9 +1,6 @@
 # Project TODO List
 
-- [ ] Create a script or Flask route to generate and save sample characters using the `CharacterBuilder`.
-- [ ] Build Marshmallow schemas for serializing/deserializing the `Character` and `Event` models.
 - [x] Define the `Relationship` model (SQLAlchemy), incorporate it into `Character`, and update migrations.
-- [ ] Adapt `CharacterBuilder` or creation logic to handle `Relationship` instances.
 - [x] Implement `generate_name` static method in `app/models.py`.
 - [x] Create basic HTML/CSS/JS CRUD page for Characters (Read, Create).
 - [x] Add Edit (Update) functionality to the character frontend.
@@ -15,8 +12,8 @@
   - [x] Set up basic React + Tailwind project structure (Done)
   - [x] Create main `App.jsx` component
   - [x] Fetch and display characters in a table (`CharacterTable.jsx`)
-  - [ ] Implement character creation (`CharacterCreateForm.jsx`)
-  - [ ] Implement character editing (`CharacterEditForm.jsx`)
+  - [ ] Implement character creation (should populate a random user, and open in edit mode) (`CharacterCreateForm.jsx`)
+  - [x] Implement character editing (`CharacterEditForm.jsx`)
   - [x] Implement character deletion
     - [x] Add delete button and API call (Done)
     - [x] Add custom confirmation modal
@@ -25,4 +22,3 @@
     - [x] Create `CharacterDetailModal` component
     - [x] Add state and logic to `App.jsx` to show modal with character data
   - [x] Replace default Vite styling with Tailwind utility classes
-  - [ ] Configure Flask to serve the React build (production)

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import ConfirmationModal from "./components/ConfirmationModal";
 import CharacterDetailModal from "./components/CharacterDetailModal";
+import CharacterEditModal from "./components/CharacterEditModal";
 
 function App() {
   const [characters, setCharacters] = useState([]);
@@ -18,6 +19,11 @@ function App() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [viewingCharacter, setViewingCharacter] = useState(null);
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingCharacter, setEditingCharacter] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [editError, setEditError] = useState(null);
+
   const apiUrl = "/api/characters";
 
   useEffect(() => {
@@ -26,6 +32,7 @@ function App() {
         setLoading(true);
         setError(null);
         setDeleteError(null);
+        setEditError(null);
         const response = await fetch(apiUrl);
         if (!response.ok) {
           let errorMsg = `HTTP error! status: ${response.status}`;
@@ -56,6 +63,7 @@ function App() {
     setIsCreating(true);
     setCreateError(null);
     setDeleteError(null);
+    setEditError(null);
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -97,6 +105,7 @@ function App() {
     setIsConfirmingDelete(true);
     setDeletingId(characterToDelete);
     setDeleteError(null);
+    setEditError(null);
 
     try {
       const response = await fetch(`${apiUrl}/${characterToDelete}`, {
@@ -150,6 +159,63 @@ function App() {
     setViewingCharacter(null);
   };
 
+  const openEditModal = (characterId) => {
+    const characterToEdit = characters.find((char) => char.id === characterId);
+    if (characterToEdit) {
+      setEditingCharacter(characterToEdit);
+      setEditError(null);
+      setIsEditModalOpen(true);
+    }
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingCharacter(null);
+    setEditError(null);
+  };
+
+  const handleUpdateCharacter = async (characterId, updatedData) => {
+    setIsSaving(true);
+    setEditError(null);
+    console.log("Saving data:", updatedData);
+    try {
+      const response = await fetch(`${apiUrl}/${characterId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (!response.ok) {
+        let errorMsg = `HTTP error! status: ${response.status}`;
+        try {
+          const errData = await response.json();
+          errorMsg =
+            errData.message ||
+            errData.error ||
+            JSON.stringify(errData.errors || errData);
+        } catch (parseErr) {
+          // Ignore if response is not JSON
+        }
+        throw new Error(errorMsg);
+      }
+
+      const savedCharacter = await response.json();
+      setCharacters((prevChars) =>
+        prevChars.map((char) =>
+          char.id === characterId ? savedCharacter : char,
+        ),
+      );
+      closeEditModal();
+    } catch (err) {
+      console.error("Error updating character:", err);
+      setEditError(err.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6 text-center">
@@ -164,6 +230,11 @@ function App() {
       {deleteError && (
         <p className="p-4 text-red-600 bg-red-100 border border-red-400 rounded mb-4">
           {deleteError}
+        </p>
+      )}
+      {editError && (
+        <p className="p-4 text-red-600 bg-red-100 border border-red-400 rounded mb-4">
+          Error updating character: {editError}
         </p>
       )}
 
@@ -249,7 +320,7 @@ function App() {
                 characters.map((char) => (
                   <tr
                     key={char.id}
-                    className={`hover:bg-gray-50 ${deletingId === char.id ? "opacity-50" : ""}`}
+                    className={`hover:bg-gray-50 ${deletingId === char.id || editingCharacter?.id === char.id ? "opacity-50" : ""}`}
                   >
                     <td
                       className="py-2 px-4 border-b text-xs text-gray-700 font-mono"
@@ -272,16 +343,22 @@ function App() {
                     <td className="py-2 px-4 border-b text-sm whitespace-nowrap">
                       <button
                         onClick={() => openViewModal(char.id)}
-                        className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 mr-1 text-xs font-medium"
+                        disabled={
+                          deletingId === char.id ||
+                          editingCharacter?.id === char.id
+                        }
+                        className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 mr-1 text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         View
                       </button>
                       <button
-                        className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-1 text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => openEditModal(char.id)}
                         disabled={
                           deletingId === char.id ||
+                          editingCharacter?.id === char.id ||
                           viewingCharacter?.id === char.id
                         }
+                        className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-1 text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Edit
                       </button>
@@ -289,6 +366,7 @@ function App() {
                         onClick={() => initiateDeleteCharacter(char.id)}
                         disabled={
                           deletingId === char.id ||
+                          editingCharacter?.id === char.id ||
                           viewingCharacter?.id === char.id
                         }
                         className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs font-medium disabled:bg-red-300 disabled:cursor-not-allowed flex items-center justify-center min-w-[60px]"
@@ -354,8 +432,13 @@ function App() {
         onClose={closeViewModal}
       />
 
-      {/* Edit Form Container (Placeholder) */}
-      {/* TODO: Implement Edit Form */}
+      <CharacterEditModal
+        isOpen={isEditModalOpen}
+        character={editingCharacter}
+        onClose={closeEditModal}
+        onSave={handleUpdateCharacter}
+        isSaving={isSaving}
+      />
     </div>
   );
 }
