@@ -39,3 +39,6 @@
 # Future Ideas
 
 - Create a page that allows you to bulk generate characters with the same occupation. This would be useful if we want to create 50 farmers
+  - [x] Add `POST /api/characters/bulk-generate` endpoint to backend.
+  - [x] Add bulk generation form (Occupation, Count) to frontend (`App.jsx`).
+  - [x] Implement `handleBulkCreate` function in frontend to call API and update state.

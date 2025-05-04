@@ -5,6 +5,7 @@ from ..schemas import CharacterSchema
 from ..services import CharacterBuilder
 from ..extensions import db
 from marshmallow import ValidationError
+from flask import current_app
 
 characters_schema = CharacterSchema(many=True)  # Renamed for clarity
 single_character_schema = CharacterSchema()  # Added for single character responses
@@ -94,3 +95,56 @@ def delete_character(character_id):
     db.session.commit()
     # Standard practice is to return 204 No Content on successful delete
     return "", 204
+
+
+@bp.route("/characters/bulk-generate", methods=["POST"])
+def bulk_create_characters():
+    """Generate multiple characters with a specified occupation."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"message": "Request body must be JSON"}), 400
+
+    occupation = data.get("occupation")
+    count = data.get("count")
+
+    if not occupation:
+        return jsonify({"message": "Missing 'occupation' in request body"}), 400
+
+    if not isinstance(count, int) or count <= 0:
+        return jsonify({"message": "'count' must be a positive integer"}), 400
+
+    if count > 100:  # Add a reasonable limit to prevent abuse
+        return jsonify(
+            {"message": "Cannot generate more than 100 characters at a time"}
+        ), 400
+
+    newly_created_characters = []
+    try:
+        for _ in range(count):
+            builder = CharacterBuilder()
+            # Build character with random attributes first
+            new_character = builder.build()
+            # Override the occupation with the provided one
+            new_character.occupation = occupation
+            # Add relationships or other default settings if needed
+            db.session.add(new_character)
+            newly_created_characters.append(new_character)
+
+        db.session.commit()
+
+    except Exception as e:
+        db.session.rollback()
+        # Log the exception for debugging
+        current_app.logger.error(f"Error during bulk character generation: {e}")
+        return jsonify(
+            {"message": "Failed to generate characters", "error": str(e)}
+        ), 500
+
+    # Optionally return the IDs or a summary of the created characters
+    # result = characters_schema.dump(newly_created_characters)
+    # return jsonify(result), 201
+    return jsonify(
+        {
+            "message": f"{count} characters with occupation '{occupation}' created successfully."
+        }
+    ), 201
