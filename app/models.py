@@ -2,6 +2,7 @@ from .extensions import db
 import uuid
 from sqlalchemy import CheckConstraint
 from faker import Faker
+import datetime
 
 # Import Enums (adjust path if enums.py is moved)
 from enums import (
@@ -192,19 +193,23 @@ class Character(db.Model):
         else:
             self.hair_color_str = value  # Handles "Bald" or None
 
-    # Helper function for height formatting
-    def _format_height(self):
-        if self.height is None:
+    @property
+    def age(self) -> int | None:
+        """Calculates the character's age based on birth_date."""
+        if not self.birth_date:
             return None
-        feet = self.height // 12
-        inches = self.height % 12
-        return f"{feet}'{inches}\""
+        today = datetime.date.today()
+        # Calculate age based on year, adjusting for month and day
+        years = today.year - self.birth_date.year
+        if (today.month, today.day) < (self.birth_date.month, self.birth_date.day):
+            years -= 1
+        return years
 
     @property
     def physical_description(self):
         feet = self.height // 12
         inches = self.height % 12
-        return f"A {feet}'{inches}\" tall, {self.weight} lbs, {self.build.value} build, {self.hair_color.value if not isinstance(self.hair_color, str) else self.hair_color} hair, {self.eye_color.value} eyes, {self.gender.value}, of {self.race.value} descent, who is a {self.occupation}."
+        return f"A {feet}'{inches}\" tall, {self.weight} lbs, {self.age} years old, {self.build.value} build, {self.hair_color.value if not isinstance(self.hair_color, str) else self.hair_color} hair, {self.eye_color.value} eyes, {self.gender.value}, of {self.race.value} descent, who is a {self.occupation}."
 
     def __repr__(self):
         return f"<Character {self.name} {self.family_name} ({self.id})>"

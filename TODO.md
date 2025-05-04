@@ -23,5 +23,7 @@
   - [x] Add more columns to the main character table (Race, Occupation, Birth Place)
   - [x] Replace default Vite styling with Tailwind utility classes
   - [x] Add 'Copy Description' button to character table actions
+- [x] Add Relationship model and link to Character.
+- [x] Add `age` property and refine `physical_description` method in `Character` model (`app/models.py`).
 
 # Future Ideas
