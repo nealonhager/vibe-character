@@ -25,5 +25,21 @@
   - [x] Add 'Copy Description' button to character table actions
 - [x] Add Relationship model and link to Character.
 - [x] Add `age` property and refine `physical_description` method in `Character` model (`app/models.py`).
+- [x] Implement basic CRUD functionality (Create, Read, Update, Delete) for characters.
+- [x] Display a list of characters fetched from the backend.
+- [x] Allow creating new characters.
+- [x] Allow deleting characters with confirmation.
+- [x] Implement viewing character details in a modal.
+- [x] Implement editing character details in a modal.
+- [x] Add loading states for asynchronous operations.
+- [x] Add error handling and display messages to the user.
+- [x] Add a copy description button to the character card.
+- [ ] Unify styling of `ConfirmationModal.jsx` with the rest of the app (`App.jsx` as reference).
+- [ ] Refactor API calls into a separate service/hook.
+- [ ] Add input validation to the edit form.
+- [ ] Improve accessibility (ARIA attributes, keyboard navigation).
+- [ ] Add pagination or infinite scrolling for large character lists.
+- [ ] Consider state management library (like Redux or Zustand) for complex state.
+- [ ] Write unit/integration tests.
 
 # Future Ideas

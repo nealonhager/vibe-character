@@ -16,37 +16,41 @@ function ConfirmationModal({
   return (
     // Overlay: Light gray background with opacity
     <div
-      className="fixed inset-0 bg-gray-500 bg-opacity-60 dark:bg-opacity-70 flex justify-center items-center z-50 p-4 transition-opacity duration-300 ease-in-out"
+      className="fixed inset-0 bg-gray-500 bg-opacity-60 dark:bg-gray-900 dark:bg-opacity-70 flex justify-center items-center z-50 p-4 transition-opacity duration-300 ease-in-out"
       onClick={onCancel}
     >
-      {/* Modal Card: White background, large rounding, padding, shadow */}
+      {/* Modal Card: White background, moderate rounding, padding, shadow, dark mode support */}
       <div
-        className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 transform transition-all duration-300 ease-in-out scale-95 opacity-0 animate-fade-scale-in"
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 transform transition-all duration-300 ease-in-out scale-95 opacity-0 animate-fade-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Title */}
-        <h3 className="text-xl font-bold mb-3 text-gray-900">{title}</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+          {title}
+        </h3>
         {/* Message */}
-        <p className="text-gray-600 mb-8 text-base">{message}</p>
+        <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
+          {message}
+        </p>
         {/* Buttons Container */}
-        <div className="flex justify-end space-x-4">
-          {/* Cancel Button: Light gray style */}
+        <div className="flex justify-end space-x-3">
+          {/* Cancel Button: Similar to App's secondary buttons */}
           <button
             onClick={onCancel}
             disabled={isConfirming}
-            className="px-6 py-3 bg-gray-100 text-gray-800 rounded-lg text-sm font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {cancelText}
           </button>
-          {/* Confirm Button: Black style */}
+          {/* Confirm Button: Similar to App's primary buttons */}
           <button
             onClick={onConfirm}
             disabled={isConfirming}
-            className="px-6 py-3 bg-gray-900 text-gray-100 rounded-lg text-sm font-medium" // Adjusted min-width for padding
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[80px]" // Added min-width for spinner consistency
           >
             {isConfirming ? (
               <svg
-                className="animate-spin h-5 w-5 text-white"
+                className="animate-spin h-4 w-4 text-white" // Adjusted size
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
