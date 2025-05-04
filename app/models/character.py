@@ -14,6 +14,8 @@ from enums import (
     Race,
 )
 from ..tables import character_siblings, event_characters
+from .relationship import Relationship  # noqa: F401
+from .event import Event  # noqa: F401
 
 
 class Character(db.Model):
