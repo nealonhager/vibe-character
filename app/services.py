@@ -4,7 +4,7 @@ from random import choice, choices, normalvariate
 from faker import Faker
 
 # Adjust import paths as needed based on project structure
-from .models import Character
+from .models.character import Character
 
 # Assuming enums.py is in the root directory
 import sys

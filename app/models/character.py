@@ -1,10 +1,7 @@
-from .extensions import db
+from ..extensions import db
 import uuid
-from sqlalchemy import CheckConstraint
-from faker import Faker
 from datetime import datetime, timezone, date
-
-# Import Enums (adjust path if enums.py is moved)
+from faker import Faker
 from enums import (
     Gender,
     BloodType,
@@ -15,38 +12,8 @@ from enums import (
     FemaleTitle,
     Build,
     Race,
-    RelationshipStatus,
-    RelationshipType,
 )
-
-# Association table for Character siblings (many-to-many self-referential)
-character_siblings = db.Table(
-    "character_siblings",
-    db.Column(
-        "character_id",
-        db.UUID(as_uuid=True),
-        db.ForeignKey("character.id"),
-        primary_key=True,
-    ),
-    db.Column(
-        "sibling_id",
-        db.UUID(as_uuid=True),
-        db.ForeignKey("character.id"),
-        primary_key=True,
-    ),
-)
-
-# Association table for Event participants (many-to-many)
-event_characters = db.Table(
-    "event_characters",
-    db.Column("event_id", db.Integer, db.ForeignKey("event.id"), primary_key=True),
-    db.Column(
-        "character_id",
-        db.UUID(as_uuid=True),
-        db.ForeignKey("character.id"),
-        primary_key=True,
-    ),
-)
+from ..tables import character_siblings, event_characters
 
 
 class Character(db.Model):
@@ -224,76 +191,3 @@ class Character(db.Model):
 
     def __repr__(self) -> str:
         return f"<Character {self.name} {self.family_name} ({self.id})>"
-
-
-class Event(db.Model):
-    __tablename__ = "event"
-
-    id = db.Column(db.Integer, primary_key=True)  # Auto-incrementing primary key
-    name = db.Column(db.String(200), nullable=False)
-    # event_count = db.Column(db.Integer, unique=True, nullable=False) # Add if needed
-
-    characters_involved = db.relationship(
-        "Character",
-        secondary=event_characters,
-        back_populates="history",
-        lazy="dynamic",
-    )
-
-    def __repr__(self):
-        return f"<Event {self.id}: {self.name}>"
-
-
-# New Relationship Model
-class Relationship(db.Model):
-    __tablename__ = "relationship"
-
-    id = db.Column(db.Integer, primary_key=True)
-    character1_id = db.Column(
-        db.UUID(as_uuid=True),
-        db.ForeignKey("character.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
-    )
-    character2_id = db.Column(
-        db.UUID(as_uuid=True),
-        db.ForeignKey("character.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
-    )
-    relationship_type = db.Column("type", db.Enum(RelationshipType), nullable=False)
-    status = db.Column(db.Enum(RelationshipStatus), nullable=False)
-    start_date = db.Column(db.Date, nullable=True)
-
-    character1 = db.relationship(
-        "Character", foreign_keys=[character1_id], back_populates="relationships"
-    )
-    # Define relationship to character2 if needed for querying from Relationship side
-    character2 = db.relationship(
-        "Character",
-        foreign_keys=[character2_id],
-        back_populates="related_to",
-    )
-
-    # Ensure character1 and character2 are not the same
-    __table_args__ = (
-        CheckConstraint(
-            "character1_id != character2_id", name="ck_relationship_not_self"
-        ),
-        # Optional: Unique constraint for a pair in one direction
-        # db.UniqueConstraint('character1_id', 'character2_id', 'relationship_type', name='uq_relationship_pair_type')
-    )
-
-    def __repr__(self):
-        return f"<Relationship {self.character1_id} -> {self.character2_id} ({self.relationship_type.value}, {self.status.value})>"
-
-
-# Example:
-# class User(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     username = db.Column(db.String(64), index=True, unique=True)
-#     email = db.Column(db.String(120), index=True, unique=True)
-#     password_hash = db.Column(db.String(256))
-
-#     def __repr__(self):
-#         return f'<User {self.username}>'
